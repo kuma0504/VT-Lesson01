@@ -11,10 +11,14 @@ public class MiniCharacter : MonoBehaviour
 
     [Header("** Camera Setting **")]
     public GameObject CameraJoint;      //カメラ軸のオブジェクト
+
+    [Header("** Weapon Setting **")]
+    public BaseWeapon weapon;           // 武器をアタッチする変数
     private Vector2 _inputMoveValue;    //Moveの入力値
     private Vector2 _inputLookValue;    //Lookの入力値
     private float _inputAttackValue;    //Attackの入力値
     private Vector3 angles;             //キャラクターの向き(角度)
+
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -27,7 +31,13 @@ public class MiniCharacter : MonoBehaviour
     void Update()
     {
         Move();     //移動メゾットを呼び出す
-        Look();     //
+        Look();     //回転メゾットを呼び出す
+
+        if(_inputAttackValue > 0)
+        {
+            weapon.OnTriggerAction();
+        }
+        
     }
 
     //移動メソッド
