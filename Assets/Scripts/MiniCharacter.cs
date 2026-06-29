@@ -4,6 +4,13 @@ using UnityEngine.InputSystem;
 
 public class MiniCharacter : MonoBehaviour
 {
+    public enum AnimationPattern
+    {
+        Idle,
+        Walk,
+        HoldBoth
+    }
+
     [Header("** Shooter Sattings **")]
     public GameObject bulletPrefab;     //弾丸のプレハブ
     public GameObject shotPoint;        //打ち出し座標
@@ -19,6 +26,11 @@ public class MiniCharacter : MonoBehaviour
     private float _inputAttackValue;    //Attackの入力値
     private Vector3 angles;             //キャラクターの向き(角度)
 
+    [Header("*** 操作設定 ***")]
+    public float mouseIntancity;
+
+    [Header("*** アニメーション設定 ***")]
+    public Animator animator;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -37,6 +49,20 @@ public class MiniCharacter : MonoBehaviour
         {
             weapon.OnTriggerAction();
         }
+
+        if(_inputMoveValue.magnitude > 0.1f)
+        {
+            animator.SetInteger("State", (int)AnimationPattern.Walk);    //歩くアニメーション
+        }
+        else
+        {
+            animator.SetInteger("State", (int)AnimationPattern.Idle);    //待機アニメーション
+        }
+
+        if(_inputAttackValue > 0.1f)
+        {
+            animator.SetInteger("State", (int)AnimationPattern.HoldBoth);    //銃構え(両方)アニメーション
+        }
         
     }
 
@@ -49,7 +75,9 @@ public class MiniCharacter : MonoBehaviour
         velocity.z = _inputMoveValue.y;        //入力(上下)で前後移動
         velocity.x = _inputMoveValue.x;        //入力(左右)で左右移動
 
-        transform. Translate(velocity * Time. deltaTime);
+        velocity = Camera.main.transform.right * _inputMoveValue.x + Camera.main.transform.forward * _inputMoveValue.y;
+
+        transform. Translate(velocity * Time. deltaTime, Space.World);
     }
 
     //向きメゾット
@@ -57,8 +85,8 @@ public class MiniCharacter : MonoBehaviour
     //戻り値：無し
     public void Look()
     {
-        angles.x += _inputLookValue.y;      //Y入力でX軸回転
-        angles.y += _inputLookValue.x;      //X入力でY軸回転
+        angles.x += _inputLookValue.y * mouseIntancity;      //Y入力でX軸回転
+        angles.y += _inputLookValue.x * mouseIntancity;      //X入力でY軸回転
 
         //X軸の角度に制限を設ける
         //↓範囲に制限を設ける数学関数
@@ -87,6 +115,8 @@ public class MiniCharacter : MonoBehaviour
     public void OnAttack(InputValue value)
     {
         _inputAttackValue = value.Get<float>();
+
+        
     }
     
     

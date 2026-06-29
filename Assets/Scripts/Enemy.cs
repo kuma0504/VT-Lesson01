@@ -22,6 +22,7 @@ public class Enemy : MonoBehaviour
         TryGetComponent<NavMeshAgent>(out agent);
         //agent = GetComponent<NavMeshAgent>();と同じ。nullチェックもしてくれる
 
+        TryGetComponent(out rb);
         //シーン上からPlayerのコンポーネントを持つオブジェクトを取得する
         player = GameObject.FindFirstObjectByType<MiniCharacter>();
 
